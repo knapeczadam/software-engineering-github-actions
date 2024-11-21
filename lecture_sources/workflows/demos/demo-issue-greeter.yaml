@@ -1,0 +1,36 @@
+name: "[Demo_3] Issue Greeter"
+run-name: "Issue Greeter using local action"
+
+on:
+    issues:
+        types: [opened]
+
+# Required to ensure that GITHUB_TOKEN has the required scope
+permissions: 
+    issues: write
+    contents: read
+
+jobs:
+    greet-bash:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Run Greeter Action (Bash)
+              uses: ./.github/actions/issue-greeter-action-bash
+              with:
+                issue-url: ${{github.event.issue.url}}
+                comment-body: "Hi @${{github.actor}}, thanks for opening this! 🎉 We'll get back to you soon! [using Bash]"
+                token: ${{secrets.GITHUB_TOKEN}}
+
+    greet-js:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Run Greeter Action (JavaScript)
+              uses: ./.github/actions/issue-greeter-action-js
+              with:
+                issue-url: ${{github.event.issue.url}}
+                comment-body: "Hi @${{github.actor}}, thanks for opening this! 🎉 We'll get back to you soon! [using JavaScript]"
+                token: ${{secrets.GITHUB_TOKEN}}

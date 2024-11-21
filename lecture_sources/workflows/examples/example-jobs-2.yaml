@@ -1,0 +1,37 @@
+name: '[Example] Jobs 2'
+run-name: '[Example] Jobs - Dependencies & Matrix'
+
+on: 
+    workflow_dispatch: 
+
+jobs:
+  initialize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Initialize
+        run: echo "Initializing the workflow..."
+
+  build:
+    needs: initialize
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        configuration: [Debug, Release]
+    steps:
+      - name: Build on ${{ matrix.os }}
+        run: echo "Building on ${{ matrix.os }}... [${{ matrix.configuration }}]"
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Tests
+        run: echo "Running tests..."
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        run: echo "Deploying the application..."

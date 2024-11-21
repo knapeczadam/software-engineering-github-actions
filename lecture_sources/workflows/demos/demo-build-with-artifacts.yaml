@@ -1,0 +1,51 @@
+name: '[Demo_5] Build/Test with Artifacts'
+run-name: Build & Test with Artifacts 
+
+on: 
+  workflow_dispatch: #run from GitHub UI
+  push:
+    branches:
+      - main
+
+env:
+  BUILD_TYPE: Debug
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBUILD_TESTS=ON
+
+      - name: Build Project
+        run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+        #pack to tar (issue workaround)
+      - run: tar cfz build.tar.gz build/
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+            name: build-package
+            path: build.tar.gz
+            retention-days: 5
+
+    
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+            name: build-package
+    
+        #unpack (with original permissions)
+      - run: tar xfz build.tar.gz
+
+      - name: Run Tests
+        run: ctest --test-dir build

@@ -1,0 +1,18 @@
+name: "Issue Greeter Action (JavaScript)"
+description: "Automatically greets users when they open an issue (using JavaScript)"
+
+inputs:
+  issue-url:
+    description: "The API URL of the issue"
+    required: true
+  comment-body:
+    description: "The greeting message to post"
+    required: true
+  token:
+    description: "Authorization token with at least issue-write scope"
+    required: true
+
+runs:
+  using: "node20"
+  #main: "index.js"
+  main: "dist/index.js" #compiled version (vercel/ncc)

@@ -1,0 +1,34 @@
+name: '[Example] Jobs 1'
+run-name: '[Example] Jobs - Multiple Jobs'
+
+on: 
+    workflow_dispatch: 
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+
+            - name: Set Up Environment
+              run: echo "Setting up the environment..."
+
+            - name: Build Project
+              run: echo "Building the project..."
+
+            - name: Run Tests
+              run: echo "Running tests..."
+
+    #This job runs in parallel with jobs.build
+    other-job:
+        runs-on: windows-latest
+        steps:
+            - run: echo "Doing stuff..."
+
+    #This job runs after job.other-job (needs)
+    dependent-job:
+        needs: other-job
+        runs-on: ubuntu-latest
+        steps:
+            - run: echo "Doing more stuff, after jobs.other-job finishes..."

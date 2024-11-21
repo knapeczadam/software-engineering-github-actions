@@ -1,0 +1,21 @@
+
+
+name: '[Example] Reusable Workflow 1'
+run-name: '[Example] Reusable Workflow'
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    secrets:
+      token:
+        required: true
+
+jobs:
+  example-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Environment
+        run: "echo Environment: ${{ inputs.environment }}"

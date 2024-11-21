@@ -1,0 +1,35 @@
+name: '[Example] Steps 1'
+run-name: '[Example] Steps 1'
+
+on: 
+    workflow_dispatch:
+        inputs:
+          os:
+            required: false
+            default: ubuntu-latest
+
+env:
+  BUILD_TYPE: Debug
+
+jobs:
+  build:
+    runs-on: ${{ inputs.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBUILD_TESTS=ON
+
+      - name: Build Project
+        run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+      - run: tar cfz build.tar.gz build/
+        shell: bash
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+            name: build-package
+            path: build.tar.gz
+            retention-days: 5

@@ -1,0 +1,41 @@
+name: "[Example] Variables 1"
+run-name: "[Example] Variables - Env/Secrets/Context Variables"
+
+on:
+    workflow_dispatch: 
+
+env:
+  GLOBAL_VAR: "This is a global environment variable"
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    env:
+      JOB_LEVEL_VAR: "This is a job-level environment variable"
+    steps:
+      # Using a globally defined environment variable
+      - name: Using Global Environment Variable
+        run: "echo Global Environment Variable: ${{ env.GLOBAL_VAR }}"
+
+      # Using a job-level environment variable 
+      - name: Using Job-Level Environment Variable
+        run: "echo Job-Level Environment Variable: ${{ env.JOB_LEVEL_VAR }}"
+
+      # Defining and using a step-level environment variable
+      - name: Using Step-Level Environment Variable
+        env:
+          STEP_LEVEL_VAR: "This is a step-level environment variable"
+        run: "echo Step-Level Environment Variable: $STEP_LEVEL_VAR"
+
+      # Using a secret
+      - name: Using Secret Variable
+        run: |
+          echo "Secret Variable: ${{ secrets.GIST_SCOPE_TOKEN }}"
+          echo "Built-in Secret: ${{ secrets.GITHUB_TOKEN }}"
+
+      # Using context variables
+      - name: Using Context Variables
+        run: |
+          echo "Branch: ${{ github.ref }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Workflow Name: ${{ github.workflow }}"

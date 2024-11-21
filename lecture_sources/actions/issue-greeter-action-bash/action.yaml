@@ -1,0 +1,30 @@
+name: "Issue Greeter Action (Bash)"
+description: "Automatically greets users when they open an issue (using Bash)"
+
+inputs:
+  issue-url:
+    description: "The API URL of the issue"
+    required: true
+  comment-body:
+    description: "The greeting message to post"
+    required: true
+  token:
+    description: "Authorization token with at least issue-write scope"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash 
+      run: |
+        set -e
+        echo "Starting Greeter Action"
+        echo "Posting Comment: ${{inputs.comment-body}}"
+
+        #Use GitHub API to post a comment
+        curl -X POST -H "Authorization: Bearer ${{inputs.token}}" \
+             -H "Content-Type: application/json" \
+             -d "{\"body\": \"${{inputs.comment-body}}\"}" \
+             "${{inputs.issue-url}}/comments"
+
+        echo "Comment Postes Successfully!"

@@ -1,0 +1,29 @@
+name: '[Example] Pemissions 1'
+run-name: '[Example] Permissions'
+
+on:
+    workflow_dispatch: 
+
+permissions: # Permissions on Workflow Level
+    contents: read
+    issues: write
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    permissions: # Permissions on Job Level
+      contents: read  # Allows reading repository content
+      issues: write   # Allows creating or modifying issues
+    steps:
+      # Step 1: Checkout the code
+      - uses: actions/checkout@v4
+
+      # Step 2: Post a comment to an issue using GITHUB_TOKEN
+      - name: Post Comment to Issue
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"title": "New Issue from Workflow",
+            "body": "This issue was created by a GitHub Actions workflow."}' \
+            https://api.github.com/repos/${{ github.repository }}/issues

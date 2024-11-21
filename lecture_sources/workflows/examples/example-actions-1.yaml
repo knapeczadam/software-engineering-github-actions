@@ -1,0 +1,29 @@
+
+name: "[Example] Actions 1"
+run-name: "[Example] Actions - Using prebuild actions"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  example:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Create an artifact file
+      - name: Create Artifact File
+        run: |
+          echo "This is a sample artifact file." > artifact.txt
+
+      # Step 3: Upload the artifact
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: example-artifact
+          path: artifact.txt
+          retention-days: 5
+
+

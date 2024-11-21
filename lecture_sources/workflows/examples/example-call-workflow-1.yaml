@@ -1,0 +1,13 @@
+name: '[Example] Call Workflow 1'
+run-name: '[Example] Call a Reusable Workflow'
+
+on: 
+  workflow_dispatch: 
+
+jobs:
+  call-reusable:
+    uses: ./.github/workflows/example-reusable-workflow-1.yaml
+    with:
+      environment: production
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,44 @@
+name: '[Example] Gist Badge Json'
+run-name: '[Example] Update JSON contents of a Gist'
+
+on: 
+  workflow_dispatch: 
+    inputs:
+        label:
+            required: false
+            default: label
+        message:
+            required: false
+            default: message
+        color:
+            required: false
+            default: orange
+        logo:
+            required: false
+            default: github
+        logo-color:
+            required: false
+            default: f5f5f5
+        file-name:
+            required: false
+            default: badge
+        gist-id:
+            required: true
+
+jobs:
+    create-badge:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Create Badge
+              uses: Tomiha/gist-write-action@v2
+              with:
+                token: ${{secrets.GIST_SCOPE_TOKEN}}
+                gist_id: ${{inputs.gist-id}}
+                file_name: ${{inputs.file-name}}.json
+                content: '{ "schemaVersion": 1, 
+                            "label": "${{inputs.label}}", 
+                            "message": "${{inputs.message}}", 
+                            "color": "${{inputs.color}}",
+                            "logoColor": "${{inputs.logo-color}}",
+                            "namedLogo": "${{inputs.logo}}" 
+                            }'

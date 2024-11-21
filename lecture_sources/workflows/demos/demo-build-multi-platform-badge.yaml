@@ -1,0 +1,32 @@
+name: "[Demo_4] Build Multi Platform Badge"
+run-name: "Build Multi Platform with Badge"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions: 
+    contents: read
+
+jobs:
+  build-for-os:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            logo_name: ubuntu
+          - os: windows-latest
+            logo_name: github
+          - os: macos-latest
+            logo_name: macos
+
+    uses: ./.github/workflows/demo-build-for-os.yaml
+    secrets: inherit
+    with:
+      os: ${{matrix.os}}
+      gist_id: 04a7b31a87feeb07c6356e437a4a0120
+      logo_name: ${{matrix.logo_name}}

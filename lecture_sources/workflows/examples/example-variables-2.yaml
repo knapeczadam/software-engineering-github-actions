@@ -1,0 +1,42 @@
+name: "[Example] Variables 2"
+run-name: "[Example] Variables - Input/Output Variables"
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deployment environment"
+        required: true
+        default: "staging"
+
+jobs:
+  input-demo:
+    runs-on: ubuntu-latest
+    steps:
+      # Using an input variable
+      - name: Print Input Variable
+        run: "echo Deployment Environment: ${{ inputs.environment }}"
+      - name: Push variable to environment
+        run: echo "step-data=Some Data" >> $GITHUB_ENV
+      - name: Use env variable
+        run: "echo Previous step data: ${{env.step-data}}"
+        
+
+  generate-output:
+    runs-on: ubuntu-latest
+    # Define job output using step output
+    outputs:
+      deployment_status: ${{ steps.output-step.outputs.result }}
+    steps:
+      - name: Generate Output
+        id: output-step
+        run: echo "result=Success for ${{ inputs.environment }}" >> $GITHUB_OUTPUT
+
+
+  use-output:
+    needs: generate-output
+    runs-on: ubuntu-latest
+    steps:
+      # Using the output from the previous job
+      - name: Use Job Output
+        run: "echo Deployment Status: ${{ needs.generate-output.outputs.deployment_status }}"

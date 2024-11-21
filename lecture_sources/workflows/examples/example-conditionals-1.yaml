@@ -1,0 +1,44 @@
+name: "[Example] Conditionals 1"
+run-name: "[Example] Conditionals"
+
+on: 
+    workflow_dispatch: 
+
+jobs:
+  conditionals-demo:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Simulate a task and set an output
+      - name: Simulate Task
+        id: task
+        run: echo "output=completed" >> $GITHUB_OUTPUT
+
+      # Step 2: Run if the output from Step 1 equals 'completed'
+      - name: Run if Output Equals 'completed'
+        if: steps.task.outputs.output == 'completed'
+        run: echo "The task output equals 'completed'!"
+
+      # Step 3: Run if the output from Step 1 contains 'complete'
+      - name: Run if Output Contains 'complete'
+        if: contains(steps.task.outputs.output, 'complete')
+        run: echo "The task output contains 'complete'!"
+
+      # Step 4: Simulate a failure
+      - name: Simulate Failure
+        id: fail
+        run: exit 1
+
+      # Step 5: Run if all previous steps succeed
+      - name: Run on Success
+        if: success()
+        run: echo "This runs because all previous steps succeeded."
+
+      # Step 6: Run if any previous step failed
+      - name: Run on Failure
+        if: failure()
+        run: echo "The previous step failed!"
+
+      # Step 7: Always run, regardless of status (except if cancelled)
+      - name: Always Run
+        if: always() && !cancelled()
+        run: echo "This runs no matter what!"

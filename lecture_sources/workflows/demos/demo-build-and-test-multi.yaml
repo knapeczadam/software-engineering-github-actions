@@ -1,0 +1,32 @@
+name: '[Demo_2] Build & Test - Multi'
+run-name: Multi Platform Build & Test 
+
+on:
+  workflow_dispatch: 
+  push:
+    branches:
+      - main
+
+env:
+  BUILD_TYPE: Debug
+
+jobs:
+  build-and-test:
+    strategy:
+      #fail-fast: true
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{matrix.os}}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -S . -B build/ -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBUILD_TESTS=ON
+
+      - name: Build Project
+        run: cmake --build build/ --config ${{env.BUILD_TYPE}}
+
+      - name: Run Tests
+        run: ctest --test-dir build/  

@@ -1,0 +1,74 @@
+name: "[Demo_4] Build For OS (Reusable)"
+run-name: "Build For OS (Reusable)"
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+      gist_id:
+        required: true
+        type: string
+      build_type:
+        required: false
+        type: string
+        default: Release
+      logo_color:
+        required: false
+        type: string
+        default: f5f5f5
+      logo_name:
+        required: false
+        type: string
+        default: github
+
+jobs:
+  build-project:
+    runs-on: ${{inputs.os}}
+    outputs:
+      badge_message: ${{ steps.set-variables.outputs.message }}
+      badge_color: ${{ steps.set-variables.outputs.color }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -B build/ -DCMAKE_BUILD_TYPE=${{inputs.build_type}}
+
+      - name: Build
+        id: build
+        run: cmake --build build/ --config ${{inputs.build_type}}
+
+      - name: Set Variables
+        if: always()
+        id: set-variables
+        shell: bash
+        run: |
+          if [ ${{steps.build.outcome}} == 'success' ]; then
+            echo "message=passing" >> $GITHUB_OUTPUT
+            echo "color=brightgreen" >> $GITHUB_OUTPUT
+          else
+            echo "message=failed" >> $GITHUB_OUTPUT
+            echo "color=red" >> $GITHUB_OUTPUT
+          fi
+
+  create-badge:
+    needs: build-project
+    runs-on: ubuntu-latest
+    if: always() && !cancelled()
+    
+    steps:
+      - name: Create Badge
+        uses: Tomiha/gist-write-action@v2
+        with:
+          token: ${{secrets.GIST_SCOPE_TOKEN}}
+          gist_id: ${{inputs.gist_id}}
+          file_name: ${{inputs.os}}.json
+          content: '{ "schemaVersion": 1, 
+                      "label": "${{inputs.os}}", 
+                      "message": "${{needs.build-project.outputs.badge_message}}", 
+                      "color": "${{needs.build-project.outputs.badge_color}}",
+                      "logoColor": "${{inputs.logo_color}}",
+                      "namedLogo": "${{inputs.logo_name}}" 
+                    }'
