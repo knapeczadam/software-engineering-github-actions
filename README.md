@@ -1,4 +1,4 @@
-# ⚙️ Software Engineering – GitHub Actions Template
+# 🤖 Software Engineering – GitHub Actions Template
 
 This repository serves as a **template project** for the **GitHub Actions lecture** in the **Software Engineering** course at **DAE**.
 
